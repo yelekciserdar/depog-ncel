@@ -1,0 +1,22 @@
+{
+  "name": "depokontrol",
+  "version": "1.0.0",
+  "description": "Envanter, Stok Giris/Cikis ve Zimmet Takip Sistemi - Web Surumu",
+  "main": "server.js",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "envanter",
+    "stok",
+    "zimmet"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "better-sqlite3": "^11.10.0"
+  }
+}

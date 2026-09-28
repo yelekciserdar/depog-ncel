@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Envanter &amp; Zimmet Takip Sistemi</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+  
+  <!-- HTML5 QR / Barkod Tarayıcı Kütüphanesi -->
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+
+    <!-- Fonts ve Style -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&family=Architects+Daughter&family=Caveat:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    
+    <!-- SweetAlert2 (Modern Uyarı Pencereleri İçin) -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
+  </head>
+  <body>
+    <!-- GİRİŞ EKRANI -->
+    <div id="loginScreen" class="login-screen">
+      <div class="login-card">
+        <div class="login-mark">
+           <div>
+            <div class="login-brand">DEPO<span>KONTROL</span></div>
+            <div class="login-sub">Envanter &amp; Zimmet Takip Sistemi</div>
+          </div>
+        </div>
+        <form id="loginForm">
+          <label>Kullanıcı Adı</label>
+          <input
+            type="text"
+            id="loginUsername"
+            autocomplete="username"
+            required
+          />
+          <label>Şifre</label>
+          <input
+            type="password"
+            id="loginPassword"
+            autocomplete="current-password"
+            required
+          />
+          <div id="loginError" class="login-error" hidden></div>
+          <button type="submit" class="btn btn-primary btn-block">
+            Giriş Yap
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- UYGULAMA -->
+    <div id="app" class="app" hidden>
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-text">DEPO<span>KONTROL</span></div>
+        </div>
+        <nav class="sidebar-nav">
+          <button class="nav-item active" data-view="ozet">
+            <span class="nav-num">01</span>Özet
+          </button>
+
+          <!-- 02 Numaralı Depo İşlemleri Akordiyon Grubu -->
+          <div class="nav-group">
+           <div class="nav-item nav-dropdown-toggle" onclick="toggleDepoIslemleriMenu();" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+              <span><span class="nav-num" style="margin-right: 6px;">02</span>Depo İşlemleri</span>
+              <span id="depoIslemleriArrow" style="transition: transform 0.2s; font-size: 11px;">▶</span>
+            </div>
+            <div id="depoIslemleriDropdown" style="display: none; padding-left: 12px; background: rgba(0,0,0,0.12);">
+              <button class="nav-item" data-view="envanter" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Envanter</button>
+              <button class="nav-item" data-view="stokgiris" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Stok Girişi</button>
+              <button class="nav-item" data-view="stokcikis" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Stok Çıkışı</button>
+              <button class="nav-item" data-view="demirbas" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Demirbaş / Zimmet</button>
+              <button class="nav-item" data-view="stokkartlari" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Stok Kartları</button>
+            </div>
+          </div>
+
+          <!-- 03 Numaralı Satın Alma Akordiyon Grubu -->
+          <div class="nav-group">
+         <div class="nav-item nav-dropdown-toggle" onclick="toggleSatinalmaMenu();" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+              <span><span class="nav-num" style="margin-right: 6px;">03</span>Satın Alma İşlemleri</span>
+              <span id="satinalmaArrow" style="transition: transform 0.2s; font-size: 11px;">▶</span>
+            </div>
+            <div id="satinalmaDropdown" style="display: none; padding-left: 12px; background: rgba(0,0,0,0.12);">
+              <button class="nav-item" data-view="satinalmatalebiolustur" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Talep Oluştur</button>
+              <button class="nav-item" data-view="satinalma" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Satın Alma Talepleri</button>
+            </div>
+          </div>
+
+          <!-- 04 Numaralı Personel Akordiyon Grubu -->
+          <div class="nav-group">
+            <div class="nav-item nav-dropdown-toggle" onclick="togglePersonelMenu();" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+              <span><span class="nav-num" style="margin-right: 6px;">04</span>Personel</span>
+              <span id="personelArrow" style="transition: transform 0.2s; font-size: 11px;">▶</span>
+            </div>
+            <div id="personelDropdown" style="display: none; padding-left: 12px; background: rgba(0,0,0,0.12);">
+              <button class="nav-item" data-view="mesaitakip" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Mesai Girişi</button>
+            </div>
+          </div>
+
+          <button class="nav-item" data-view="musterikartlari">
+            <span class="nav-num">05</span>Müşteri Kartları
+          </button>
+          <button class="nav-item" data-view="cariislemler">
+            <span class="nav-num">06</span>Cari Hesap Takibi
+          </button>
+          <button class="nav-item" data-view="faturalar">
+            <span class="nav-num">07</span>Fatura Geçmişi
+          </button>
+
+          <!-- 08 Numaralı Detaylı Raporlar Akordiyon Grubu -->
+          <div class="nav-group">
+            <div class="nav-item nav-dropdown-toggle" onclick="toggleRaporlarMenu();" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+              <span><span class="nav-num" style="margin-right: 6px;">08</span>Detaylı Raporlar</span>
+              <span id="raporlarArrow" style="transition: transform 0.2s; font-size: 11px;">▶</span>
+            </div>
+            <div id="raporlarDropdown" style="display: none; padding-left: 12px; background: rgba(0,0,0,0.12);">
+              <button class="nav-item" data-view="raporlar" onclick="localStorage.setItem('aktifRaporTab', 'tekne')" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Tekne & Personel Çıkışları</button>
+              <button class="nav-item" data-view="raporlar" onclick="localStorage.setItem('aktifRaporTab', 'kisi')" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Kişiye Göre Malzeme</button>
+              <button class="nav-item" data-view="raporlar" onclick="localStorage.setItem('aktifRaporTab', 'zimmet')" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Personel Aktif Zimmetler</button>
+            </div>
+          </div>
+
+          <!-- 09 Numaralı Ayarlar Akordiyon Grubu -->
+          <div class="nav-group">
+         <div class="nav-item nav-dropdown-toggle" onclick="toggleAyarlarMenu();" style="display: flex; justify-content: space-between; align-items: center; cursor: pointer;">
+              <span><span class="nav-num" style="margin-right: 6px;">09</span>Ayarlar</span>
+              <span id="ayarlarArrow" style="transition: transform 0.2s; font-size: 11px;">▶</span>
+            </div>
+            <div id="ayarlarDropdown" style="display: none; padding-left: 12px; background: rgba(0,0,0,0.12);">
+              <button class="nav-item" data-view="ayarlar" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Sistem Ayarları</button>
+              <button class="nav-item" data-view="kullanicilar" style="width: 100%; text-align: left; font-size: 13px; padding: 7px 10px;">• Kullanıcılar</button>
+            </div>
+          </div>
+
+          <button class="nav-item" data-view="tekneuretim">
+            <span class="nav-num">10</span>Tekne Üretim Atölyesi
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="who">
+            <div class="who-name" id="whoName">—</div>
+            <div class="who-role" id="whoRole">—</div>
+          </div>
+          <button id="logoutBtn" class="btn-logout" title="Çıkış Yap">
+            Çıkış
+          </button>
+        </div>
+      </aside>
+
+      <main class="content">
+        <header class="content-header">
+          <h1 id="viewTitle">Özet</h1>
+          <div class="content-header-date" id="headerDate"></div>
+        </header>
+        <div id="viewBody" class="view-body"></div>
+      </main>
+    </div>
+
+    <div id="toast" class="toast" hidden></div>
+
+    <!-- Excel Kütüphanesi ve Uygulama Mantığı -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    <script src="/app.js?v=barkod-v2-1"></script>
+  </body>
+</html>
+
